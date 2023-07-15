@@ -162,10 +162,11 @@ class Moderation(commands.Cog):
 
         await logs_channel.send('Logging has been enabled. Events and actions will be logged here.')
 
-    def log_action(self, moderator, member, action,reason):
+    def log_action(self, moderator, member, action, reason):
         """Log a moderation action to the mod.db database"""
-        mod_cursor.execute('INSERT INTO mod_log VALUES (?, ?, ?, ?, ?)',
-                           (moderator.id, moderator.name, member.id, member.name, action, reason))
+        mod_cursor.execute('CREATE TABLE IF NOT EXISTS mod_log (moderator_id TEXT, moderator_name TEXT, member_id TEXT, member_name TEXT, action TEXT, reason TEXT)')
+        mod_cursor.execute('INSERT INTO mod_log VALUES (?, ?, ?, ?, ?, ?)',
+                        (moderator.id, moderator.name, member.id, member.name, action, reason))
         mod_db.commit()
 
     def cog_unload(self):

@@ -36,6 +36,7 @@ class Bot(commands.Bot):
 bot = Bot()
 bot.launch_time = datetime.utcnow() #type: ignore
 
+
 @bot.event
 async def on_ready():
     
