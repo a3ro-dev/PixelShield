@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from typing import Union
+import configuration.discordConfig as dcfg
 
 class Utilities(commands.Cog):
     """A collection of utility commands for managing and manipulating server-related tasks."""
@@ -123,6 +124,24 @@ class Utilities(commands.Cog):
             await ctx.send(embed=embed)
         else:
             await ctx.send("The server does not have an icon.")
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        targeted_category_id = dcfg.ticket_categ_id 
+        targeted_user_id = 929438824227020832
+
+        if message.author.bot:
+            return
+
+        if message.channel.category_id != targeted_category_id:
+            return
+
+        if message.mentions and not message.author.guild_permissions.administrator:
+            targeted_user = message.guild.get_member(targeted_user_id)  
+            if targeted_user and targeted_user in message.mentions:
+                reply = f"Hello {message.author.mention}, please note that the minimum response time for {targeted_user.mention} is three hours. We kindly request your patience as they may be busy attending to other matters. We appreciate your understanding!"
+                await message.channel.send(reply)
+
 
 async def setup(bot):
     await bot.add_cog(Utilities(bot))

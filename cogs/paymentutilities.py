@@ -1,11 +1,81 @@
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
+import configuration.discordConfig as dcfg
 import os
 import io
 import qrcode
 import pyshorteners
 from bhimupipy import verify_upi
+import requests
+import json
+import paytmchecksum
+
+mid = dcfg.mid
+merchant_key = dcfg.merchant_key
+
+def create_payment_link(amount: int, description: str):
+    # Prepare the request parameters
+    paytm_params = {
+        "body": {
+            "mid": mid,
+            "linkType": "GENERIC",
+            "linkDescription": description,
+            "linkName": "Payment",
+            "amount": amount
+        },
+        "head": {
+            "tokenType": "AES"
+        }
+    }
+
+    # Generate checksum by parameters
+    checksum = paytmchecksum.generateSignature(json.dumps(paytm_params["body"]), merchant_key)
+    paytm_params["head"]["signature"] = checksum
+
+    # Make the API request
+    url = "https://securegw-stage.paytm.in/link/create"  # Use the staging URL for testing
+    response = requests.post(url, json=paytm_params)
+
+    # Parse the response
+    response_data = response.json()
+    if response_data.get("body") and response_data["body"].get("shortUrl"):
+        return response_data["body"]["shortUrl"]
+    else:
+        return None
+
+def is_payment_received(payment_id):
+
+    # Prepare the request parameters
+    paytm_params = {
+        "body": {
+            "mid": mid,
+            "orderId": payment_id
+        },
+        "head": {
+            "tokenType": "AES"
+        }
+    }
+
+    # Generate checksum by parameters
+    checksum = paytmchecksum.generateSignature(json.dumps(paytm_params["body"]), merchant_key)
+    paytm_params["head"]["signature"] = checksum
+
+    # Make the API request
+    url = "https://securegw-stage.paytm.in/v3/order/status"  # Use the staging URL for testing
+    response = requests.post(url, json=paytm_params)
+
+    # Parse the response
+    response_data = response.json()
+    if response_data.get("body") and response_data["body"].get("resultInfo"):
+        result = response_data["body"]["resultInfo"]
+        if result.get("resultStatus") == "TXN_SUCCESS":
+            return True
+        else:
+            return False
+    else:
+        return False
+
 
 class UPIView(View):
     def __init__(self, upi_url):
@@ -25,14 +95,14 @@ class UPI(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def upi(self, ctx, amount: int):
+    @commands.hybrid_command()
+    async def upi(self, ctx, amount: int, description: str):
         """
         Generates Payment QR Code
         """
         # Generate the UPI link
-        upi_url = f"https://pay.upilink.in/pay/pheonixelite1@okaxis?am={amount}"
-        upi_link = f"upi://pay?pa=pheonixelite1@okaxis&pn=Aero&am={amount}"
+        upi_url = create_payment_link(amount=amount, description=description)
+        upi_link = f"upi://pay?pa=&pn=PixelShield&am={amount}"
 
         # Shorten the UPI link using TinyURL
         upi_shortened = self.shorten_link(upi_url)
@@ -54,7 +124,7 @@ class UPI(commands.Cog):
         # Create an embed message
         embed = discord.Embed(title="UPI", description=f"Amount: {amount}")
         embed.add_field(name=f"UPI Link", value=f"[Click Here]({upi_shortened})")
-        embed.set_footer(text="💳 UPI ID: akshatt@fam")
+        embed.set_footer(text="💳 UPI ID: ")
 
         # Convert the QR code to bytes
         qr_bytes = io.BytesIO()
@@ -74,7 +144,7 @@ class UPI(commands.Cog):
         shortened_url = s.tinyurl.short(link)
         return shortened_url
     
-    @commands.command()
+    @commands.hybrid_command()
     async def check_upi(self, ctx, upi_id: str):
         """
         Checks the validity and shows information regarding a vpa

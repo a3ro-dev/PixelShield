@@ -115,6 +115,8 @@ class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
         staff_role = discord.utils.get(guild.roles, id=staff_role_id) #type: ignore
         if staff_role:
             await ticket_channel.send(f'{staff_role.mention}')
+        user = interaction.user.id
+        await ticket_channel.send(f'<@{user}>')
 
         # Return the ticket channel
         return ticket_channel

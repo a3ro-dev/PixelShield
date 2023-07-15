@@ -33,7 +33,7 @@ class Catalogue(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['designs', 'catalog', 'covers', 'skins'])
+    @commands.hybrid_command(aliases=['designs', 'catalog', 'covers', 'skins'])
     async def catalogue(self, ctx):
         """
         Display the available designs catalogue.

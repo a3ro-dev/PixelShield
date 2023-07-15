@@ -106,7 +106,7 @@ class Moderation(commands.Cog):
             embed.add_field(name='Member', value=member.mention)
             await logs_channel.send(embed=embed)
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         """Kick a member from the server"""
@@ -118,7 +118,7 @@ class Moderation(commands.Cog):
         # DM the user
         await member.send(f"You have been kicked from {ctx.guild.name}. Reason: {reason}")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         """Ban a member from the server"""
@@ -130,7 +130,7 @@ class Moderation(commands.Cog):
         # DM the user
         await member.send(f"You have been banned from {ctx.guild.name}. Reason: {reason}")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(kick_members=True)
     async def warn(self, ctx, member: discord.Member, *, reason=None):
         """Warn a member"""
@@ -143,14 +143,14 @@ class Moderation(commands.Cog):
         # DM the user
         await member.send(f"You have been warned in {ctx.guild.name}. Reason: {reason}")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def lockdown(self, ctx, channel: discord.TextChannel):
         """Lockdown a channel, preventing everyone from sending messages"""
         await channel.set_permissions(ctx.guild.default_role, send_messages=False)
         await ctx.send(f"{channel.mention} is now in lockdown.")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def log(self, ctx):
         """Log various events and actions in the server"""

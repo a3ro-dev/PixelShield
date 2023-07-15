@@ -29,7 +29,7 @@ class Auth(commands.Cog):
         """)
         self.db.commit()
 
-    @commands.command(aliases=['signup', 'create_account'])
+    @commands.hybrid_command(aliases=['signup', 'create_account'])
     async def register(self, ctx):
         """
         Register a new user account with PixelShield.

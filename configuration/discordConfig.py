@@ -17,3 +17,6 @@ PartnerShipSupportRole = 1125015807479521280
 BotDevRole = 1125015548426723402
 
 base_dir = "img"
+
+mid = ""
+merchant_key = ""
