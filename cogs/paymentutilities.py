@@ -1,81 +1,11 @@
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
-import configuration.discordConfig as dcfg
+from PIL import Image, ImageOps
 import os
 import io
 import qrcode
-import pyshorteners
 from bhimupipy import verify_upi
-import requests
-import json
-import paytmchecksum
-
-mid = dcfg.mid
-merchant_key = dcfg.merchant_key
-
-def create_payment_link(amount: int, description: str):
-    # Prepare the request parameters
-    paytm_params = {
-        "body": {
-            "mid": mid,
-            "linkType": "GENERIC",
-            "linkDescription": description,
-            "linkName": "Payment",
-            "amount": amount
-        },
-        "head": {
-            "tokenType": "AES"
-        }
-    }
-
-    # Generate checksum by parameters
-    checksum = paytmchecksum.generateSignature(json.dumps(paytm_params["body"]), merchant_key)
-    paytm_params["head"]["signature"] = checksum
-
-    # Make the API request
-    url = "https://securegw-stage.paytm.in/link/create"  # Use the staging URL for testing
-    response = requests.post(url, json=paytm_params)
-
-    # Parse the response
-    response_data = response.json()
-    if response_data.get("body") and response_data["body"].get("shortUrl"):
-        return response_data["body"]["shortUrl"]
-    else:
-        return None
-
-def is_payment_received(payment_id):
-
-    # Prepare the request parameters
-    paytm_params = {
-        "body": {
-            "mid": mid,
-            "orderId": payment_id
-        },
-        "head": {
-            "tokenType": "AES"
-        }
-    }
-
-    # Generate checksum by parameters
-    checksum = paytmchecksum.generateSignature(json.dumps(paytm_params["body"]), merchant_key)
-    paytm_params["head"]["signature"] = checksum
-
-    # Make the API request
-    url = "https://securegw-stage.paytm.in/v3/order/status"  # Use the staging URL for testing
-    response = requests.post(url, json=paytm_params)
-
-    # Parse the response
-    response_data = response.json()
-    if response_data.get("body") and response_data["body"].get("resultInfo"):
-        result = response_data["body"]["resultInfo"]
-        if result.get("resultStatus") == "TXN_SUCCESS":
-            return True
-        else:
-            return False
-    else:
-        return False
-
 
 class UPIView(View):
     def __init__(self, upi_url):
@@ -96,54 +26,63 @@ class UPI(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    async def upi(self, ctx, amount: int, description: str):
+    async def upi(self, ctx, amount: int):
         """
         Generates Payment QR Code
         """
+        upi_id = "id@bank"
+
         # Generate the UPI link
-        upi_url = create_payment_link(amount=amount, description=description)
-        upi_link = f"upi://pay?pa=&pn=PixelShield&am={amount}"
-
-        # Shorten the UPI link using TinyURL
-        upi_shortened = self.shorten_link(upi_url)
-
-        # Create the 'qrcodes' directory if it doesn't exist
-        if not os.path.exists("qrcodes"):
-            os.makedirs("qrcodes")
+        upi_url = f"https://tools.apgy.in/upi/PixelShield/{upi_id}/{amount}"
+        upi_link = f"upi://pay?pa={upi_id}&pn=PixelShield&am={amount}"
 
         # Create a QR code image
         qr_code = qrcode.QRCode()
         qr_code.add_data(upi_link)
         qr_code_image = qr_code.make_image(fill_color="black", back_color="white")
-        qr_code_image = qr_code_image.resize((200, 200))  # Resize the QR code to 200x200 pixels
+        qr_code_image = qr_code_image.resize((1000, 1000))  # Resize the QR code to 800x800 pixels
 
-        # Save the QR code as a file
-        qr_code_path = f"qrcodes/upi_qr_{amount}.png"  # QR code file path
-        qr_code_image.save(qr_code_path)
+        # Load the border image
+        border_path = "D:/PixelShield/assets/borders.png"
+        border_image = Image.open(border_path)
+
+        # Create a blank image of the size of the space in the center of the border (800x800)
+        blank_image = Image.new("RGBA", (1000, 1000), (255, 255, 255, 0))
+
+        # Calculate the position to place the QR code in the center of the blank image
+        offset = ((blank_image.width - qr_code_image.width) // 2, (blank_image.height - qr_code_image.height) // 2)
+
+        # Paste the QR code onto the blank image
+        blank_image.paste(qr_code_image, offset)
+
+        # Calculate the position to place the blank image (with QR code) onto the border image
+        border_offset = ((border_image.width - blank_image.width) // 2, (border_image.height - blank_image.height) // 2)
+
+        # Paste the blank image (with QR code) onto the border image
+        border_image.paste(blank_image, border_offset)
+
+        # Save the final image with the QR code and border
+        qr_code_with_border_path = f"qrcodes/upi_qr_{amount}_with_border.png"  # QR code with border file path
+        border_image.save(qr_code_with_border_path)
 
         # Create an embed message
         embed = discord.Embed(title="UPI", description=f"Amount: {amount}")
-        embed.add_field(name=f"UPI Link", value=f"[Click Here]({upi_shortened})")
-        embed.set_footer(text="💳 UPI ID: ")
+        embed.add_field(name=f"UPI Link", value=f"[Click Here]({upi_url})")
+        embed.set_footer(text=f"💳 UPI ID: {upi_id}")
 
-        # Convert the QR code to bytes
+        # Convert the QR code with border to bytes
         qr_bytes = io.BytesIO()
-        qr_code_image.save(qr_bytes, format='PNG')
+        border_image.save(qr_bytes, format='PNG')
         qr_bytes.seek(0)
 
         # Send the embed message with the QR code as an attachment and the button
-        view = UPIView(upi_shortened)
-        qr_file = discord.File(qr_code_path, filename='qr_code.png')
+        view = UPIView(upi_url)
+        qr_file = discord.File(qr_code_with_border_path, filename='qr_code.png')
         await ctx.send(content="Click the button below to make the payment:", embed=embed, view=view, file=qr_file)
 
         # Delete the generated QR code file
-        os.remove(qr_code_path)
-
-    def shorten_link(self, link):
-        s = pyshorteners.Shortener()
-        shortened_url = s.tinyurl.short(link)
-        return shortened_url
-    
+        os.remove(qr_code_with_border_path)
+ 
     @commands.hybrid_command()
     async def check_upi(self, ctx, upi_id: str):
         """

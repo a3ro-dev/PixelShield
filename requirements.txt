@@ -3,7 +3,6 @@ jishaku
 discord-pretty-help
 qrcode
 pillow
-pyshorteners
 bhimupi
 binlist
 paytmchecksum
