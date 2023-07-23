@@ -50,9 +50,8 @@ python pixelshield.py
 - discord-pretty-help
 - qrcode
 - pillow
-- pyshorteners
 - bhimupi
-- binlist
+- platform
 
 ## Contributing
 

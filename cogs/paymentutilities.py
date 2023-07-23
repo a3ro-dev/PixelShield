@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
-from PIL import Image, ImageOps
+from PIL import Image
+import configuration.discordConfig as dcfg
 import os
 import io
 import qrcode
@@ -26,15 +27,15 @@ class UPI(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    async def upi(self, ctx, amount: int):
+    async def upi(self, ctx, amount: int, description: str):
         """
         Generates Payment QR Code
         """
-        upi_id = "id@bank"
+        upi_id = dcfg.upi_id
 
         # Generate the UPI link
         upi_url = f"https://tools.apgy.in/upi/PixelShield/{upi_id}/{amount}"
-        upi_link = f"upi://pay?pa={upi_id}&pn=PixelShield&am={amount}"
+        upi_link = f"upi://pay?pa={upi_id}&pn=PixelShield&am={amount}tn={description}"
 
         # Create a QR code image
         qr_code = qrcode.QRCode()

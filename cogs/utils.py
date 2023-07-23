@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 from typing import Union
 import configuration.discordConfig as dcfg
+import platform
+import socket
 
 class Utilities(commands.Cog):
     """A collection of utility commands for managing and manipulating server-related tasks."""
@@ -114,6 +116,52 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.hybrid_command(aliases=['dmrole'])
+    @commands.has_permissions(administrator=True)
+    async def dm_role(self, ctx, role: discord.Role, *, args):
+        memberlist = []
+        mlist = []
+        for member in role.members:
+            try:
+                await member.send(args)
+                memberlist.append(member.name)
+                mlist = ", \n".join(memberlist)
+            except Exception as e:
+                print(e)
+        embed = discord.Embed(title="Direct Message sent to Members")
+        embed.description = f"""
+**__Role:__**
+```{role}```
+
+**__Members:__** 
+```{mlist}```
+
+**__Message:__**
+```{args}```
+"""
+        embed.set_footer(text=f"Executed by {ctx.author}", icon_url=ctx.author.avatar)
+        embed.timestamp = discord.utils.utcnow()
+        channel = self.bot.get_channel(dcfg.modchannel)
+        await channel.send(embed=embed)
+
+    @commands.hybrid_command(aliases=['message'])
+    @commands.has_permissions(administrator=True)
+    async def dm(self, ctx, member: discord.Member, *, message):
+        "Direct message a user"
+        try:
+            await member.send(message)
+            await ctx.send(f"```{message}``` sent to {member.name}#{member.discriminator}")
+            logembed = discord.Embed()
+            logembed.title = f'Direct Message send to: __`{member.name}{member.discriminator}`__'
+            logembed.description = f'''
+            **__Message:__** 
+            ```{message}``` '''
+            logembed.set_footer(text=f"Executed by {ctx.author}", icon_url=ctx.author.avatar)
+            dmchannel = discord.utils.get(ctx.guild.channels, id=dcfg.modchannel)
+            await dmchannel.send(embed=logembed)
+        except:
+            return await ctx.send('❌ Logging has failed!')
+
     @commands.command()
     async def server_icon(self, ctx):
         """Show the server's icon"""
@@ -124,6 +172,40 @@ class Utilities(commands.Cog):
             await ctx.send(embed=embed)
         else:
             await ctx.send("The server does not have an icon.")
+
+    @commands.hybrid_command()
+    async def devinfo(self, ctx):
+        """
+        Get information about the bot developer and other details
+        """
+        # Developer Information
+        dev_socials = "https://solo.to/a3ro.xyz"
+        dev_web = "https://a3ro.xyz"
+        dev_github = "a3ro-dev"
+
+        # Bot Information
+        bot_name = self.bot.user.name
+        bot_version = discord.__version__
+        python_version = platform.python_version()
+        discord_py_version = discord.__version__
+        os_info = f"{platform.system()} {platform.release()}"
+        isp_info = socket.gethostbyname(socket.gethostname())
+
+        embed = discord.Embed(title=f"{bot_name} Developer Info", description=f"💻 {dev_socials}\n🌐 {dev_web}\n📚 {dev_github}")
+        embed.add_field(name="Bot Version", value=bot_version, inline=True)
+        embed.add_field(name="Python Version", value=python_version, inline=True)
+        embed.add_field(name="discord.py Version", value=discord_py_version, inline=True)
+        embed.add_field(name="OS Info", value=os_info, inline=True)
+        embed.add_field(name="ISP Info", value=isp_info, inline=True)
+
+        # Add a link to the bot's GitHub repository
+        github_repo = "https://github.com/a3ro-dev/pixelshield"
+        embed.add_field(name="GitHub Repository", value=f"[GitHub Repo]({github_repo})", inline=False)
+
+        # Customize the footer with a nerdy message
+        embed.set_footer(text="Aero by day, Aeroplane by night!")
+
+        await ctx.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -141,6 +223,31 @@ class Utilities(commands.Cog):
             if targeted_user and targeted_user in message.mentions:
                 reply = f"Hello {message.author.mention}, please note that the minimum response time for {targeted_user.mention} is three hours. We kindly request your patience as they may be busy attending to other matters. We appreciate your understanding!"
                 await message.channel.send(reply)
+
+    @commands.hybrid_command(aliases=['social'], description="Sends socials of Graphics Code")
+    async def socials(self, ctx):
+        button1 = discord.ui.Button(label='Facebook', url="https://discord.com/channels/1117696325010587720/1117696326839312418",
+                             emoji='<:facebook:1132595134769397830>')
+
+        button2 = discord.ui.Button(label='Telegram',
+                             url="https://behance.net/graphicscode1",
+                             emoji='<Be:1024981938500554752>')
+
+        button3 = discord.ui.Button(label='Instagram',
+                             url="https://discord.com/channels/1117696325010587720/1117696326839312417",
+                             emoji='<:Instagram:1132594548074360933>')
+
+        button4 = discord.ui.Button(label='Website',
+                             url="https://discord.com/channels/1117696325010587720/1117696327095156746",
+                             emoji='<:website:1132594836202061905>')
+
+        view = discord.ui.View()
+        view.add_item(button1)
+        view.add_item(button2)
+        view.add_item(button3)
+        view.add_item(button4)
+        await ctx.send("Choose the social media that you would like to follow!", view=view)
+
 
 
 async def setup(bot):

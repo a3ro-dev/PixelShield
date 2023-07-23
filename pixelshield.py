@@ -25,7 +25,7 @@ class Bot(commands.Bot):
         intents = discord.Intents.all()
 
         super().__init__(
-            case_insensitive=True,
+            case_insensitive=False,
             command_prefix=commands.when_mentioned_or(dconfig.PREFIX),
             intents=intents,
             owner_ids=dconfig.botManagerID,

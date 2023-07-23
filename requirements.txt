@@ -4,5 +4,4 @@ discord-pretty-help
 qrcode
 pillow
 bhimupi
-binlist
-paytmchecksum
+platform
