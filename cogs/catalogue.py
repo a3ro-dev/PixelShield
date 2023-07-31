@@ -74,7 +74,7 @@ class Catalogue(commands.Cog):
             files.sort()
             for file in files:
                 name = os.path.splitext(file)[0]
-                embed = discord.Embed(title=f"Covers Catalogue - {name}")
+                embed = discord.Embed(title=f"Mobile Cover Catalogue - {name}")
                 embed.set_image(url=f"attachment://{file}")
                 await ctx.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed, view=view)
 
@@ -88,7 +88,7 @@ class Catalogue(commands.Cog):
             files.sort()
             for file in files:
                 name = os.path.splitext(file)[0]
-                embed = discord.Embed(title=f"Skins Catalogue - {name}")
+                embed = discord.Embed(title=f"Mouse Pad Catalogue - {name}")
                 embed.set_image(url=f"attachment://{file}")
                 await ctx.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed, view=view)
 
@@ -107,8 +107,9 @@ class coversSkinsButtons(discord.ui.View):
         files.sort()
         for file in files:
             name = os.path.splitext(file)[0]
-            embed = discord.Embed(title=f"Covers Catalogue - {name}")
+            embed = discord.Embed(title=f"Mobile Cover Catalogue - {name}")
             embed.set_image(url=f"attachment://{file}")
+            embed.set_footer(text="The images shown are for illustration purposes only and may not be an exact representation of the product or the packaging")
             await interaction.channel.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed)
 
         try:
@@ -116,15 +117,16 @@ class coversSkinsButtons(discord.ui.View):
         except discord.errors.NotFound as e:
             logger.error(f"Error sending message: {e}")
 
-    @button(label='Skins', style=discord.ButtonStyle.blurple, custom_id='skins')
+    @button(label='MousePad', style=discord.ButtonStyle.blurple, custom_id='skins')
     async def skinsbtn(self, interaction: discord.Interaction, button: discord.ui.Button):
         files = os.listdir(skin_dir)
         files = [f for f in files if os.path.isfile(os.path.join(skin_dir, f))]
         files.sort()
         for file in files:
             name = os.path.splitext(file)[0]
-            embed = discord.Embed(title=f"Skins Catalogue - {name}")
+            embed = discord.Embed(title=f"Mouse Pad Catalogue - {name}")
             embed.set_image(url=f"attachment://{file}")
+            embed.set_footer(text="The images shown are for illustration purposes only and may not be an exact representation of the product or the packaging")
             await interaction.channel.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed)
 
         try:

@@ -50,7 +50,7 @@ python pixelshield.py
 - discord-pretty-help
 - qrcode
 - pillow
-- bhimupi
+- bhimupipy
 - platform
 
 ## Contributing

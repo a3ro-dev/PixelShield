@@ -3,5 +3,5 @@ jishaku
 discord-pretty-help
 qrcode
 pillow
-bhimupi
-platform
+bhimupipy
+
