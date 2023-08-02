@@ -11,7 +11,7 @@ log_file = f"./logs/{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}.log"
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO,
-    filename=log_file
+    filename=log_file #type: ignore
 )
 
 # Create a logger instance
@@ -48,8 +48,8 @@ class Catalogue(commands.Cog):
 
     async def send_catalogue(self, ctx):
         view = coversSkinsButtons()
-        view.response = await ctx.send("Which catalog do you want to browse?", view=view, ephemeral=True)
-        view.response.author_id = ctx.author.id
+        view.response = await ctx.send("Which catalog do you want to browse?", view=view, ephemeral=True) #type: ignore
+        view.response.author_id = ctx.author.id #type: ignore
 
     @commands.Cog.listener()
     async def on_component(self, ctx):
@@ -75,7 +75,7 @@ class Catalogue(commands.Cog):
                 embed = discord.Embed(title=f"Mobile Cover Catalogue - {name}")
                 embed.set_image(url=f"attachment://{file}")
                 await ctx.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed, view=view)
-            view.response = await ctx.send("All covers have been displayed.", ephemeral=True)
+            view.response = await ctx.send("All covers have been displayed.", ephemeral=True) #type: ignore
 
     async def send_skin_catalogue(self, ctx):
         if not isinstance(ctx.channel, discord.DMChannel) and not isinstance(ctx.channel, discord.GroupChannel):
@@ -88,7 +88,7 @@ class Catalogue(commands.Cog):
                 embed = discord.Embed(title=f"Mouse Pad Catalogue - {name}")
                 embed.set_image(url=f"attachment://{file}")
                 await ctx.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed, view=view)
-            view.response = await ctx.send("All skins have been shared.", ephemeral=True)
+            view.response = await ctx.send("All skins have been shared.", ephemeral=True) #type: ignore
 
 class coversSkinsButtons(discord.ui.View):
     def __init__(self):
@@ -105,7 +105,7 @@ class coversSkinsButtons(discord.ui.View):
             embed = discord.Embed(title=f"Mobile Cover Catalogue - {name}")
             embed.set_image(url=f"attachment://{file}")
             embed.set_footer(text="The images shown are for illustration purposes only and may not be an exact representation of the product or the packaging")
-            await interaction.channel.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed)
+            await interaction.channel.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed) #type: ignore
         try:
             await interaction.response.send_message("All covers have been displayed.", ephemeral=True)
         except discord.errors.NotFound as e:
@@ -121,7 +121,7 @@ class coversSkinsButtons(discord.ui.View):
             embed = discord.Embed(title=f"Mouse Pad Catalogue - {name}")
             embed.set_image(url=f"attachment://{file}")
             embed.set_footer(text="The images shown are for illustration purposes only and may not be an exact representation of the product or the packaging")
-            await interaction.channel.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed)
+            await interaction.channel.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed) #type: ignore
         try:
             await interaction.response.send_message("All skins have been shared.", ephemeral=True)
         except discord.errors.NotFound as e:

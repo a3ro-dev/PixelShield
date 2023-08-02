@@ -83,12 +83,12 @@ class Utilities(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.hybrid_command()
-    async def avatar(self, ctx, member: discord.Member = None):
+    async def avatar(self, ctx, member: discord.Member = None): #type: ignore
         """Show the avatar of a user"""
         if member is None:
             member = ctx.author
 
-        avatar_url = member.avatar.url
+        avatar_url = member.avatar.url #type: ignore
 
         embed = discord.Embed(title="User Avatar")
         embed.set_image(url=avatar_url)
@@ -96,13 +96,13 @@ class Utilities(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.hybrid_command()
-    async def userinfo(self, ctx, member: discord.Member = None):
+    async def userinfo(self, ctx, member: discord.Member = None): #type: ignore
         """Get information about a user"""
         if member is None:
             member = ctx.author
 
         embed = discord.Embed(title="User Info")
-        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_thumbnail(url=member.avatar.url) #type: ignore
 
         if member.banner is not None:
             embed.set_image(url=member.banner.url)
@@ -112,7 +112,7 @@ class Utilities(commands.Cog):
         embed.add_field(name="ID", value=member.id, inline=True)
         embed.add_field(name="Bot", value=member.bot, inline=True)
         embed.add_field(name="Created At", value=member.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
-        embed.add_field(name="Joined At", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
+        embed.add_field(name="Joined At", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True) #type: ignore
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(aliases=['dmrole'])
