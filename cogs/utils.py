@@ -52,7 +52,7 @@ class Utilities(commands.Cog):
 
     @commands.hybrid_command()
     @commands.has_permissions(manage_roles=True, manage_channels=True)
-    async def add_role_to_channel(self, ctx, channel: discord.TextChannel, role: Union[discord.Role, int]):
+    async def add_role_to_channel(self, ctx, channel: discord.TextChannel, role: Union[discord.Role, int, None]):
         """Add a role to a channel"""
         if isinstance(role, int):
             role_id = role
