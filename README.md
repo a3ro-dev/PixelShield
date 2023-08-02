@@ -1,6 +1,6 @@
 # PixelShield
 
-A Discord bot written in Python that protects your server with various moderation and utility features.
+A Discord bot written in Python for PixelShield.
 
 ## Installation
 
