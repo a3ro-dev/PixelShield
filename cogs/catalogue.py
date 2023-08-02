@@ -55,12 +55,10 @@ class Catalogue(commands.Cog):
     async def on_component(self, ctx):
         if ctx.author.id == self.bot.user.id:
             return
-
         if ctx.origin_message.author.id == self.bot.user.id:
             if ctx.author.id == ctx.origin_message.author_id:
                 view = ctx.view
                 view.value = ctx.custom_id
-
                 if view.value == 'covers':
                     await self.send_cover_catalogue(ctx)
                 elif view.value == 'skins':
@@ -77,7 +75,6 @@ class Catalogue(commands.Cog):
                 embed = discord.Embed(title=f"Mobile Cover Catalogue - {name}")
                 embed.set_image(url=f"attachment://{file}")
                 await ctx.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed, view=view)
-
             view.response = await ctx.send("All covers have been displayed.", ephemeral=True)
 
     async def send_skin_catalogue(self, ctx):
@@ -91,9 +88,7 @@ class Catalogue(commands.Cog):
                 embed = discord.Embed(title=f"Mouse Pad Catalogue - {name}")
                 embed.set_image(url=f"attachment://{file}")
                 await ctx.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed, view=view)
-
             view.response = await ctx.send("All skins have been shared.", ephemeral=True)
-
 
 class coversSkinsButtons(discord.ui.View):
     def __init__(self):
@@ -111,7 +106,6 @@ class coversSkinsButtons(discord.ui.View):
             embed.set_image(url=f"attachment://{file}")
             embed.set_footer(text="The images shown are for illustration purposes only and may not be an exact representation of the product or the packaging")
             await interaction.channel.send(file=discord.File(os.path.join(cover_dir, file), filename=file), embed=embed)
-
         try:
             await interaction.response.send_message("All covers have been displayed.", ephemeral=True)
         except discord.errors.NotFound as e:
@@ -128,12 +122,10 @@ class coversSkinsButtons(discord.ui.View):
             embed.set_image(url=f"attachment://{file}")
             embed.set_footer(text="The images shown are for illustration purposes only and may not be an exact representation of the product or the packaging")
             await interaction.channel.send(file=discord.File(os.path.join(skin_dir, file), filename=file), embed=embed)
-
         try:
             await interaction.response.send_message("All skins have been shared.", ephemeral=True)
         except discord.errors.NotFound as e:
             logger.error(f"Error sending message: {e}")
-
 
 async def setup(bot):
     await bot.add_cog(Catalogue(bot))

@@ -75,7 +75,7 @@ class Auth(commands.Cog):
                 await ctx.send("An error occurred during account creation. Please try again later.")
                 error_message = f"Error: {str(e)}"
                 logger.error(error_message)
-                admin_id = dcfg.admin_uid  # Replace YOUR_ADMIN_ID with the actual admin user ID
+                admin_id = dcfg.admin_uid #type: ignore
                 admin = await self.bot.fetch_user(admin_id)
                 await admin.send(error_message)
 

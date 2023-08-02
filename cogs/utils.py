@@ -11,46 +11,46 @@ class Utilities(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def ping(self, ctx):
         """Check the bot's latency"""
         latency = round(self.bot.latency * 1000)
         await ctx.send(f"Pong! Latency: {latency}ms")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def say(self, ctx, *, message):
         """Make the bot say a message"""
         await ctx.send(message)
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def rename_channel(self, ctx, channel: discord.TextChannel, new_name: str):
         """Rename a channel"""
         await channel.edit(name=new_name)
         await ctx.send(f"The channel has been renamed to {channel.mention}.")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def move_channel(self, ctx, channel: discord.TextChannel, category: discord.CategoryChannel):
         """Move a channel to a different category"""
         await channel.edit(category=category)
         await ctx.send(f"The channel {channel.mention} has been moved to the category {category.name}.")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def slowmode(self, ctx, channel: discord.TextChannel, duration: int):
         """Set the slowmode duration for a channel"""
         await channel.edit(slowmode_delay=duration)
         await ctx.send(f"The slowmode duration for {channel.mention} has been set to {duration} seconds.")
 
-    @commands.command()
+    @commands.hybrid_command(aliases=['delete'])
     @commands.has_permissions(manage_channels=True)
     async def delete_channel(self, ctx, channel: discord.TextChannel):
         """Delete a channel"""
         await channel.delete()
         await ctx.send(f"The channel {channel.mention} has been deleted.")
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_permissions(manage_roles=True, manage_channels=True)
     async def add_role_to_channel(self, ctx, channel: discord.TextChannel, role: Union[discord.Role, int]):
         """Add a role to a channel"""
@@ -66,7 +66,7 @@ class Utilities(commands.Cog):
         else:
             await ctx.send("Invalid role provided.")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def server_info(self, ctx):
         """Get information about the server"""
         server = ctx.guild
@@ -82,7 +82,7 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.hybrid_command()
     async def avatar(self, ctx, member: discord.Member = None):
         """Show the avatar of a user"""
         if member is None:
@@ -95,7 +95,7 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.hybrid_command()
     async def userinfo(self, ctx, member: discord.Member = None):
         """Get information about a user"""
         if member is None:
@@ -113,7 +113,6 @@ class Utilities(commands.Cog):
         embed.add_field(name="Bot", value=member.bot, inline=True)
         embed.add_field(name="Created At", value=member.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
         embed.add_field(name="Joined At", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
-
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(aliases=['dmrole'])
@@ -189,7 +188,8 @@ class Utilities(commands.Cog):
         python_version = platform.python_version()
         discord_py_version = discord.__version__
         os_info = f"{platform.system()} {platform.release()}"
-        isp_info = socket.gethostbyname(socket.gethostname())
+        isp_info = socket.gethostname()
+        # print(isp_info) 
 
         embed = discord.Embed(title=f"{bot_name} Developer Info", description=f"💻 {dev_socials}\n🌐 {dev_web}\n📚 {dev_github}")
         embed.add_field(name="Bot Version", value=bot_version, inline=True)
@@ -216,6 +216,9 @@ class Utilities(commands.Cog):
             return
 
         if message.channel.category_id != targeted_category_id:
+            return
+        
+        if message.channel == discord.DMChannel:
             return
 
         if message.mentions and not message.author.guild_permissions.administrator:

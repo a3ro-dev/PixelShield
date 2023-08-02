@@ -40,62 +40,62 @@ class Tickett(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         try:
             if self.values[0] == "Order":
-                mod = interaction.guild.get_role(config.TicketSupportRole)  # Mod1
-                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id)
+                mod = interaction.guild.get_role(config.TicketSupportRole) #type: ignore
+                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
                 await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True)
-                ticket_channel = await categ.create_text_channel(name=f"order-{interaction.user.name}")
+                ticket_channel = await categ.create_text_channel(name=f"order-{interaction.user.name}") #type: ignore
 
-                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True)
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True)
+                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.TicketSupportRole}> ")
-                embed = discord.Embed(title=f"{interaction.guild.name} Support!",
+                embed = discord.Embed(title=f"{interaction.guild.name} Support!", #type: ignore
                                       description="Thank you for reaching out. Our staff will assist you with your order-related issue.")
                 await ticket_channel.send(embed=embed, view=view)
 
             if self.values[0] == "Issue":
-                mod = interaction.guild.get_role(config.AdminSupportRole)  # Mod2
-                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id)
-                await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True)
-                ticket_channel = await categ.create_text_channel(name=f"issue-{interaction.user.name}")
+                mod = interaction.guild.get_role(config.AdminSupportRole) #type: ignore
+                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
+                await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True) 
+                ticket_channel = await categ.create_text_channel(name=f"issue-{interaction.user.name}") #type: ignore
 
-                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True)
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True)
+                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.AdminSupportRole}> ")
-                embed = discord.Embed(title=f"{interaction.guild.name} Support!",
+                embed = discord.Embed(title=f"{interaction.guild.name} Support!", #type: ignore
                                       description="Thank you for reaching out. Our admin will assist you with your issue.")
                 await ticket_channel.send(embed=embed, view=view)
             
             if self.values[0] == "Partnership":
-                mod = interaction.guild.get_role(config.PartnerShipSupportRole)  # Mod3
-                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id)
+                mod = interaction.guild.get_role(config.PartnerShipSupportRole)  #type: ignore
+                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
                 await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True)
-                ticket_channel = await categ.create_text_channel(name=f"partnership-{interaction.user.name}")
+                ticket_channel = await categ.create_text_channel(name=f"partnership-{interaction.user.name}") #type: ignore
 
-                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True)
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True)
+                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.PartnerShipSupportRole}> ")
-                embed = discord.Embed(title=f"{interaction.guild.name} Support!",
+                embed = discord.Embed(title=f"{interaction.guild.name} Support!", #type: ignore
                                       description="Thank you for reaching out. Our partnership manager will assist you with your partnership inquiry.")
                 await ticket_channel.send(embed=embed, view=view)
 
             if self.values[0] == "Bot Issue":
-                mod = interaction.guild.get_role(config.BotDevRole)  # Mod4
-                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id)
+                mod = interaction.guild.get_role(config.BotDevRole)  #type: ignore
+                categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
                 await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True)
-                ticket_channel = await categ.create_text_channel(name=f"bot-issue-{interaction.user.name}")
+                ticket_channel = await categ.create_text_channel(name=f"bot-issue-{interaction.user.name}") #type: ignore
 
-                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True)
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True)
+                await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.BotDevRole}> ")
-                embed = discord.Embed(title=f"{interaction.guild.name} Support!",
+                embed = discord.Embed(title=f"{interaction.guild.name} Support!", #type: ignore
                                       description="Thank you for reaching out. Our developer will assist you with your bot-related issue.")
                 await ticket_channel.send(embed=embed, view=view)
         except Exception as e:
@@ -111,15 +111,15 @@ class Close(discord.ui.View):
         super().__init__(timeout=None)
         self.value = None
 
-    @discord.ui.button(label="Delete", style=discord.ButtonStyle.red, custom_id='del')
+    @discord.ui.button(label="Delete", style=discord.ButtonStyle.red, custom_id='del') #type: ignore
     async def tick_close(self, button: discord.ui.Button, interaction: discord.Interaction):
         try:
-            if not interaction.user.guild_permissions.manage_channels:
+            if not interaction.user.guild_permissions.manage_channels: #type: ignore
                 await interaction.response.send_message('You are missing permissions to delete the channel!', ephemeral=True)
             else:
                 await interaction.response.send_message('Deleting the channel in 10 seconds!')
                 await asyncio.sleep(10)
-                await interaction.channel.delete()
+                await interaction.channel.delete() #type: ignore
                 self.value = True
         except Exception as e:
             logging.error(f"Failed to close ticket: {e}")

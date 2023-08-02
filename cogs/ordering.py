@@ -124,7 +124,6 @@ class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
 class OrderingModalViewBut(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-
     @discord.ui.button(emoji='<:pixelshield:1126182274422026300>', style=discord.ButtonStyle.gray, custom_id='applybut')
     async def callmodalcallback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(OrderingCallModalView())
@@ -142,7 +141,7 @@ def get_user_name(user_id):
     cursor.execute(f"SELECT name FROM {table_name} WHERE id = ?", (user_id,))
     result = cursor.fetchone()
     conn.close()
-    return result[0] if result else "Unknown"
+    return result[0] if result else "User not yet signed up"
 
 async def setup(bot):
     await bot.add_cog(Ordering(bot))

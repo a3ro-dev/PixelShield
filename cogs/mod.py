@@ -58,7 +58,7 @@ class Moderation(commands.Cog):
         logs_channel = discord.utils.get(channel.guild.channels, name='server-logs')
         if logs_channel:
             embed = discord.Embed(title='Channel', color=discord.Color.red())
-            embed.add_field(name='Category', value=c.name)
+            embed.add_field(name='Category', value=channel.name)
             await logs_channel.send(embed=embed)
 
     @commands.Cog.listener()
@@ -111,10 +111,8 @@ class Moderation(commands.Cog):
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         """Kick a member from the server"""
         await member.kick(reason=reason)
-
         # Log the kick
         self.log_action(ctx.author, member, 'Kick', reason)
-
         # DM the user
         await member.send(f"You have been kicked from {ctx.guild.name}. Reason: {reason}")
 
@@ -123,10 +121,8 @@ class Moderation(commands.Cog):
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         """Ban a member from the server"""
         await member.ban(reason=reason)
-
         # Log the ban
         self.log_action(ctx.author, member, 'Ban', reason)
-
         # DM the user
         await member.send(f"You have been banned from {ctx.guild.name}. Reason: {reason}")
 
@@ -136,10 +132,8 @@ class Moderation(commands.Cog):
         """Warn a member"""
         mod_cursor.execute('INSERT INTO warnings VALUES (?, ?, ?)', (member.id, ctx.author.id, reason))
         mod_db.commit()
-
         # Log the warning
         self.log_action(ctx.author, member, 'Warn', reason)
-
         # DM the user
         await member.send(f"You have been warned in {ctx.guild.name}. Reason: {reason}")
 

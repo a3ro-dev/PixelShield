@@ -37,9 +37,12 @@ class Greetings (commands.Cog):
 <:pixelshield:1126182274422026300> **| Catalogue** <#1117696326080135188>
 <:pixelshield:1126182274422026300> __Experience fashionable uniquenes__
 <:pixelshield:1126182274422026300> **| Order Placement:** <#1117696326386339860>
+<:pixelshield:1126182274422026300> __Create a PixelShield Account__
+<:pixelshield:1126182274422026300> **| Use `$register` command in <@1125004870622122035> DMs** 
+
 ⪦━━━━━━━━━━━━━━━━━━━━━━━⪧
 **HAVE A GOOD STAY ♡**"""
-        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_thumbnail(url=member.avatar.url) #type: ignore
         embed.set_footer(text=f'{member.guild.name} | {member.guild.id}', icon_url=member.guild.icon.url) #type: ignore
         channel = member.guild.get_channel(cfg.WELCOME) 
         await channel.send(content=member.mention,embed=embed, view=view) #type: ignore

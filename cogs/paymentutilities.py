@@ -13,10 +13,8 @@ class UPIView(View):
         super().__init__()
 
         self.upi_url = upi_url
-
         # Create the blurple button
-        self.button = Button(style=discord.ButtonStyle.blurple, label="Make Payment", url=self.upi_url)
-
+        self.button = Button(style=discord.ButtonStyle.blurple, label="Make Payment", url=self.upi_url, emoji="<:upi:1126125282311553044>")
         self.add_item(self.button)
 
 class UPI(commands.Cog):
@@ -28,40 +26,36 @@ class UPI(commands.Cog):
 
     @commands.hybrid_command()
     async def upi(self, ctx, amount: int, description: str):
+        if amount == None:
+            await ctx.send('Please enter an Amount')
+
+        if description == None:
+            await ctx.send('Please enter the design name')
         """
         Generates Payment QR Code
         """
         upi_id = dcfg.upi_id
-
         # Generate the UPI link
         upi_url = f"https://tools.apgy.in/upi/PixelShield/{upi_id}/{amount}"
         upi_link = f"upi://pay?pa={upi_id}&pn=PixelShield&am={amount}tn={description}"
-
         # Create a QR code image
         qr_code = qrcode.QRCode()
         qr_code.add_data(upi_link)
         qr_code_image = qr_code.make_image(fill_color="black", back_color="white")
         qr_code_image = qr_code_image.resize((1000, 1000))  # Resize the QR code to 800x800 pixels
-
         # Load the border image
-        border_path = "D:/PixelShield/assets/borders.png"
+        border_path = "/home/ubuntu/PixelShield/assets/borders.png" 
         border_image = Image.open(border_path)
-
         # Create a blank image of the size of the space in the center of the border (800x800)
         blank_image = Image.new("RGBA", (1000, 1000), (255, 255, 255, 0))
-
         # Calculate the position to place the QR code in the center of the blank image
         offset = ((blank_image.width - qr_code_image.width) // 2, (blank_image.height - qr_code_image.height) // 2)
-
         # Paste the QR code onto the blank image
         blank_image.paste(qr_code_image, offset)
-
         # Calculate the position to place the blank image (with QR code) onto the border image
         border_offset = ((border_image.width - blank_image.width) // 2, (border_image.height - blank_image.height) // 2)
-
         # Paste the blank image (with QR code) onto the border image
         border_image.paste(blank_image, border_offset)
-
         # Save the final image with the QR code and border
         qr_code_with_border_path = f"qrcodes/upi_qr_{amount}_with_border.png"  # QR code with border file path
         border_image.save(qr_code_with_border_path)
@@ -86,12 +80,14 @@ class UPI(commands.Cog):
  
     @commands.hybrid_command()
     async def check_upi(self, ctx, upi_id: str):
+        if upi_id == None:
+            await ctx.send('Enter upi id')
+
         """
         Checks the validity and shows information regarding a vpa
         """
         # Verify the UPI ID using the bhimupipy library
         result = verify_upi(upi_id)
-
         # Create an embed message with the UPI details
         embed = discord.Embed(title="UPI Verification")
 
