@@ -109,6 +109,8 @@ class Moderation(commands.Cog):
     @commands.hybrid_command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
+        if member == None:
+            await ctx.send("Provide member mention to kick")
         """Kick a member from the server"""
         await member.kick(reason=reason)
         # Log the kick
@@ -119,6 +121,8 @@ class Moderation(commands.Cog):
     @commands.hybrid_command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
+        if member == None:
+            await ctx.send('Provide member mention to ban')
         """Ban a member from the server"""
         await member.ban(reason=reason)
         # Log the ban
@@ -129,6 +133,8 @@ class Moderation(commands.Cog):
     @commands.hybrid_command()
     @commands.has_permissions(kick_members=True)
     async def warn(self, ctx, member: discord.Member, *, reason=None):
+        if member == None:
+            await ctx.send('Provide member mention to warn')
         """Warn a member"""
         mod_cursor.execute('INSERT INTO warnings VALUES (?, ?, ?)', (member.id, ctx.author.id, reason))
         mod_db.commit()
@@ -140,6 +146,8 @@ class Moderation(commands.Cog):
     @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def lockdown(self, ctx, channel: discord.TextChannel):
+        if channel == None:
+            await ctx.send('Provide channel mention to lockdown')
         """Lockdown a channel, preventing everyone from sending messages"""
         await channel.set_permissions(ctx.guild.default_role, send_messages=False)
         await ctx.send(f"{channel.mention} is now in lockdown.")

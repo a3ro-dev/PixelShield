@@ -14,7 +14,7 @@ class UPIView(View):
 
         self.upi_url = upi_url
         # Create the blurple button
-        self.button = Button(style=discord.ButtonStyle.blurple, label="Make Payment", url=self.upi_url, emoji="<:upi:1126125282311553044>")
+        self.button = Button(style=discord.ButtonStyle.blurple, label="Make Payment", url=self.upi_url, emoji='<:upi:1126125282311553044>')
         self.add_item(self.button)
 
 class UPI(commands.Cog):
@@ -82,7 +82,7 @@ class UPI(commands.Cog):
     async def check_upi(self, ctx, upi_id: str):
         if upi_id == None:
             await ctx.send('Enter upi id')
-
+            
         """
         Checks the validity and shows information regarding a vpa
         """
