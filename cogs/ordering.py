@@ -43,7 +43,7 @@ class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
         style=discord.TextStyle.short,
         placeholder='Enter your device/model name',
         required=True,
-        max_length=60
+        max_length=80
     )
 
     q2 = discord.ui.TextInput(
@@ -59,7 +59,7 @@ class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
         style=discord.TextStyle.short,
         placeholder='Enter design name',
         required=True,
-        max_length=10
+        max_length=50
     )
 
     q4 = discord.ui.TextInput(
@@ -110,7 +110,7 @@ class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
         ticket_channel = await category.create_text_channel(name=f'{user_name}-ticket')
 
         # Send the embed and mention the staff role
-        await ticket_channel.send(embed=embed)
+        await ticket_channel.send(embed=embed) #type: ignore
         staff_role_id = 1117696325010587723
         staff_role = discord.utils.get(guild.roles, id=staff_role_id) #type: ignore
         if staff_role:
