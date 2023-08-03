@@ -81,7 +81,7 @@ class Auth(commands.Cog):
                 admin = await self.bot.fetch_user(admin_id)
                 await admin.send(error_message)
 
-    @commands.hybrid_command(aliases=['logout', 'signout', 'delete_account', 'del_acc'])
+    @commands.hybrid_command(aliases=['logout', 'signout', 'del_acc'])
     async def delete_account(self, ctx):
         """
         Delete the user account and related data from PixelShield.
