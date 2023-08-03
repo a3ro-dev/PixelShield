@@ -9,7 +9,7 @@ botManagerID = [
     516439107732373514   # Helltronix 1
 ]
 
-admin_uid = 905658967005495356 #a3ro.xyz
+admin_uid = [905658967005495356] #a3ro.xyz
 guild_id = 1117696325010587720
 ticket_categ_id = 1125410839604764752
 modchannel = 1120014819278463107

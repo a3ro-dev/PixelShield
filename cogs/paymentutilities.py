@@ -26,14 +26,14 @@ class UPI(commands.Cog):
 
     @commands.hybrid_command()
     async def upi(self, ctx, amount: int, description: str):
+        """
+        Generates Payment QR Code
+        """
         if amount == None:
             await ctx.send('Please enter an Amount')
 
         if description == None:
             await ctx.send('Please enter the design name')
-        """
-        Generates Payment QR Code
-        """
         upi_id = dcfg.upi_id
         # Generate the UPI link
         upi_url = f"https://tools.apgy.in/upi/PixelShield/{upi_id}/{amount}"
@@ -79,13 +79,12 @@ class UPI(commands.Cog):
         os.remove(qr_code_with_border_path)
  
     @commands.hybrid_command()
-    async def check_upi(self, ctx, upi_id: str):
-        if upi_id == None:
-            await ctx.send('Enter upi id')
-            
+    async def check_upi(self, ctx, upi_id: str):          
         """
         Checks the validity and shows information regarding a vpa
         """
+        if upi_id == None:
+            await ctx.send('Enter upi id')
         # Verify the UPI ID using the bhimupipy library
         result = verify_upi(upi_id)
         # Create an embed message with the UPI details

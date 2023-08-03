@@ -20,12 +20,18 @@ class Utilities(commands.Cog):
     @commands.hybrid_command()
     async def say(self, ctx, *, message):
         """Make the bot say a message"""
+        if message == None:
+            await ctx.send('Provide the message to say')
         await ctx.send(message)
 
     @commands.hybrid_command()
     @commands.has_permissions(manage_channels=True)
     async def rename_channel(self, ctx, channel: discord.TextChannel, new_name: str):
         """Rename a channel"""
+        if channel == None:
+            await ctx.send('Provide channel mention')
+        if new_name == None:
+            await ctx.send(f'Provide the new name for {channel}')
         await channel.edit(name=new_name)
         await ctx.send(f"The channel has been renamed to {channel.mention}.")
 

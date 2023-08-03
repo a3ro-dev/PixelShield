@@ -3,6 +3,7 @@ from configuration import discordConfig as dcfg
 from discord.ext import commands
 import asyncio
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ class Auth(commands.Cog):
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
                 name TEXT
+                orders TEXT
             )
         """)
         self.db.commit()
@@ -78,6 +80,102 @@ class Auth(commands.Cog):
                 admin_id = dcfg.admin_uid #type: ignore
                 admin = await self.bot.fetch_user(admin_id)
                 await admin.send(error_message)
+
+    @commands.hybrid_command(aliases=['logout', 'signout', 'delete_account', 'del_acc'])
+    async def delete_account(self, ctx):
+        """
+        Delete the user account and related data from PixelShield.
+        """
+        user_id = ctx.author.id
+        self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
+        result = self.cursor.fetchone()
+        if not result:  # User does not exist in the database
+            await ctx.send("You don't have a PixelShield account to delete.")
+            return
+
+        await ctx.send("Are you sure you want to delete your account and all related data? (y/n)")
+        try:
+            confirm = await self.bot.wait_for('message', check=lambda m: m.author == ctx.author, timeout=10)
+        except asyncio.TimeoutError:
+            await ctx.send("Time's up. Account deletion canceled.")
+            return
+
+        if confirm.content.strip().lower() != 'y':
+            await ctx.send("Account deletion canceled.")
+            return
+
+        async def loading_animation():
+            frames = ["/", "-", "\\", "|"]
+            i = 0
+            message = await ctx.send("Deleting PixelShield account...")
+            while i < 5:
+                await asyncio.sleep(1)
+                i += 1
+                await message.edit(content=f"Deleting PixelShield account... {frames[i % 4]}")
+
+        try:
+            await asyncio.gather(loading_animation(), asyncio.sleep(5))
+
+            self.cursor.execute("DELETE FROM users WHERE id=?", (user_id,))
+            self.db.commit()
+
+            await ctx.send("Your account and related data have been deleted successfully.")
+        except Exception as e:
+            await ctx.send("An error occurred during account deletion. Please try again later.")
+            error_message = f"Error: {str(e)}"
+            logger.error(error_message)
+            admin_id = dcfg.admin_uid  # type: ignore
+            admin = await self.bot.fetch_user(admin_id)
+            await admin.send(error_message)
+
+
+    @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
+    @commands.command(aliases=['add_order', 'addo', 'add_orderhist', 'addhist'])
+    async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
+        """
+        Add an order for a user in the database.
+        """
+        user_id = user.id #type: ignore
+        self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
+        result = self.cursor.fetchone()
+        if not result:  # User does not exist in the database
+            await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") #type: ignore
+            return
+
+        orders_data = json.loads(result[2]) if result[2] else {}
+        order_count = len(orders_data) + 1
+        orders_data[f"order #{order_count}"] = order_details
+
+        self.cursor.execute("UPDATE users SET orders=? WHERE id=?", (json.dumps(orders_data), user_id))
+        self.db.commit()
+
+        await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).") #type: ignore
+
+    @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
+    @commands.command(aliases=['order_history', 'orderhist', 'oh'])
+    async def order_history(self, ctx, user: commands.UserConverter):
+        """
+        Show a user's order history along with other details in an embed.
+        """
+        user_id = user.id #type: ignore
+        self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
+        result = self.cursor.fetchone()
+        if not result:  # User does not exist in the database
+            await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") #type: ignore
+            return
+
+        orders_data = json.loads(result[2]) if result[2] else {}
+        order_history = "\n".join(f"{order}: {details}" for order, details in orders_data.items())
+
+        registered_at = datetime.strptime(result[3], "%Y-%m-%d %H:%M:%S.%f").strftime("%b %d, %Y %H:%M:%S") #type: ignore
+
+        embed = Embed(title=f"Order History for {user.display_name}") #type: ignore
+        embed.add_field(name="User ID", value=user_id, inline=False)
+        embed.add_field(name="Registration Date", value=registered_at, inline=False)
+        embed.add_field(name="Order History", value=order_history or "No orders found.", inline=False)
+
+        await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(Auth(bot))
