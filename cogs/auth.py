@@ -130,7 +130,7 @@ class Auth(commands.Cog):
 
 
     @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
-    @commands.command(aliases=['add_order', 'addo', 'add_orderhist', 'addhist'])
+    @commands.command(aliases=['addo', 'add_orderhist', 'addhist'])
     async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
         """
         Add an order for a user in the database.
@@ -152,7 +152,7 @@ class Auth(commands.Cog):
         await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).") #type: ignore
 
     @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
-    @commands.command(aliases=['order_history', 'orderhist', 'oh'])
+    @commands.command(aliases=['orderhist', 'oh'])
     async def order_history(self, ctx, user: commands.UserConverter):
         """
         Show a user's order history along with other details in an embed.
