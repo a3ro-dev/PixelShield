@@ -129,7 +129,7 @@ class Auth(commands.Cog):
             await admin.send(error_message)
 
 
-    @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
+    @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the admin_roles list
     @commands.command(aliases=['addo', 'add_orderhist', 'addhist'])
     async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
         """

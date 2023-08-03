@@ -10,6 +10,7 @@ botManagerID = [
 ]
 
 admin_uid = [905658967005495356, ...] #a3ro.xyz
+bot_dev = [1125015548426723402, ...]
 guild_id = 1117696325010587720
 ticket_categ_id = 1125410839604764752
 modchannel = 1120014819278463107
