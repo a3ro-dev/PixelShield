@@ -41,7 +41,7 @@ bot.launch_time = datetime.utcnow() #type: ignore
 
 @bot.event
 async def on_ready():
-    
+    bot.loop.create_task(update_presence())
     bot.startup_time = 0
     link = await bot.guilds[0].text_channels[0].create_invite()
     print(f'--------------------------------------------------------------')
