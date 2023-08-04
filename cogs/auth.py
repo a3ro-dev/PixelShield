@@ -129,7 +129,7 @@ class Auth(commands.Cog):
             await admin.send(error_message)
 
 
-    @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_uid list
+    @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
     @commands.hybrid_command(aliases=['addo', 'add_orderhist', 'addhist'])
     async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
         """
@@ -140,17 +140,18 @@ class Auth(commands.Cog):
         result = self.cursor.fetchone()
 
         if result is None:  # User does not exist in the database
-            await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") #type: ignore
+            await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") # type: ignore
             return
 
-        orders_data = json.loads(result[2]) if result[2] else {}
+        _, _, orders_data = result  # Unpack the result tuple to get the orders_data
+        orders_data = json.loads(orders_data) if orders_data else {}
         order_count = len(orders_data) + 1
         orders_data[f"order #{order_count}"] = order_details
 
         self.cursor.execute("UPDATE users SET orders=? WHERE id=?", (json.dumps(orders_data), user_id))
         self.db.commit()
 
-        await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).") #type: ignore
+        await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).") # type: ignore
 
     @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
     @commands.hybrid_command(aliases=['orderhist', 'oh'])
