@@ -7,6 +7,7 @@ import configuration.discordConfig as dconfig
 from pretty_help import PrettyHelp
 import psutil
 import asyncio 
+import random
 
 # Configure logging
 log_file = f"./logs/{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}.log"
@@ -67,11 +68,12 @@ async def update_presence():
         # Get memory usage and CPU usage
         memory_usage = psutil.virtual_memory().percent
         cpu_usage = psutil.cpu_percent(interval=None)
+        name= [f"Memory: {memory_usage:.1f}% | CPU: {cpu_usage:.1f}%", "Designing Mobile Covers", "Delivering Orders", "Managing Orders"]
 
         # Set the presence with memory and CPU usage info
         await bot.change_presence(
             activity=discord.Streaming(
-                name=f"Memory: {memory_usage:.1f}% | CPU: {cpu_usage:.1f}%",
+                name= random.choice(name),
                 url="https://www.twitch.tv/pixelshield",  # Replace with your Twitch channel URL
             )
         )
