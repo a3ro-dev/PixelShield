@@ -129,29 +129,29 @@ class Auth(commands.Cog):
             await admin.send(error_message)
 
 
-    @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the admin_uid
+    @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
     @commands.hybrid_command(aliases=['addo', 'add_orderhist', 'addhist'])
     async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
         """
         Add an order for a user in the database.
         """
         user_id = user.id
-        self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
+        self.cursor.execute("SELECT id, orders FROM users WHERE id=?", (user_id,))
         result = self.cursor.fetchone()
 
         if result is None:  # User does not exist in the database
             await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.")
             return
 
-        _, _, orders_data = result  # Unpack the result tuple to get the orders_data
-        orders_data = json.loads(orders_data) if orders_data else {}
-        order_count = len(orders_data) + 1
-        orders_data[f"order #{order_count}"] = order_details
+        user_id, orders_data = result
+        if not orders_data:
+            orders_data = []
 
-        self.cursor.execute("UPDATE users SET orders=? WHERE id=?", (json.dumps(orders_data), user_id))
+        orders_data.append(order_details)
+        self.cursor.execute("UPDATE users SET orders=? WHERE id=?", (sqlite3.Binary(pickle.dumps(orders_data)), user_id))
         self.db.commit()
 
-        await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).")
+        await ctx.send(f"Order added for {user.display_name} (ID: {user_id}).")
 
     @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
     @commands.hybrid_command(aliases=['orderhist', 'oh'])
