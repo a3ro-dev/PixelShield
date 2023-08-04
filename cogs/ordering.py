@@ -25,7 +25,7 @@ class Ordering(commands.Cog):
         """
         self.bot.add_view(OrderingModalViewBut())
 
-    @commands.command(aliases=['buy', 'form', 'place_order'])
+    @commands.hybrid_command(aliases=['buy', 'form', 'place_order'])
     async def order(self, ctx):
         """
          Displays the order modal. Note that you need to be logged in to make this a bot command
@@ -37,6 +37,44 @@ class Ordering(commands.Cog):
             icon_url="https://media.discordapp.net/attachments/1120014819278463107/1126180390466490468/pixelshield.png?width=404&height=404")
         view = OrderingModalViewBut()
         await ctx.send(embed=embed, view=view)
+    
+    @commands.hybrid_command()
+    async def cancel(self, ctx, user_id: int):
+        conn = sqlite3.connect(database_file)
+        cursor = conn.cursor()
+
+        # Check if the user exists in the database
+        cursor.execute("SELECT COUNT(*) FROM users WHERE id=?", (user_id,))
+        user_exists = cursor.fetchone()[0] > 0
+
+        if not user_exists:
+            await ctx.send("User not found in the database.")
+            conn.close()
+            return
+
+        # Get the current orders data for the specified user
+        cursor.execute("SELECT orders FROM users WHERE id=?", (user_id,))
+        orders_data = cursor.fetchone()[0]
+
+        if not orders_data:
+            await ctx.send("No orders data found for this user.")
+            conn.close()
+            return
+
+        # Split the orders data into a list and remove the last entry
+        orders_list = orders_data.split(",")
+        if orders_list:
+            orders_list.pop()
+            updated_orders_data = ",".join(orders_list)
+        else:
+            updated_orders_data = ""
+
+        # Update the database with the modified orders data
+        cursor.execute("UPDATE users SET orders=? WHERE id=?", (updated_orders_data, user_id))
+        conn.commit()
+        conn.close()
+
+        await ctx.send(f"Last order for user with ID {user_id} has been canceled.")
 
 class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
     q1 = discord.ui.TextInput(
@@ -149,6 +187,7 @@ def get_user_name(user_id):
     result = cursor.fetchone()
     conn.close()
     return result[0] if result else "User not yet signed up"
+
 
 async def setup(bot):
     await bot.add_cog(Ordering(bot))
