@@ -129,7 +129,7 @@ class Auth(commands.Cog):
             await admin.send(error_message)
 
 
-    @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the admin_roles list
+    @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_uid list
     @commands.hybrid_command(aliases=['addo', 'add_orderhist', 'addhist'])
     async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
         """
@@ -152,7 +152,7 @@ class Auth(commands.Cog):
 
         await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).") #type: ignore
 
-    @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
+    @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
     @commands.hybrid_command(aliases=['orderhist', 'oh'])
     async def order_history(self, ctx, user: commands.UserConverter):
         """
@@ -168,14 +168,12 @@ class Auth(commands.Cog):
         orders_data = json.loads(result[2]) if result[2] else {}
         order_history = "\n".join(f"{order}: {details}" for order, details in orders_data.items())
 
-        registered_at = datetime.strptime(result[3], "%Y-%m-%d %H:%M:%S.%f").strftime("%b %d, %Y %H:%M:%S") #type: ignore
-
         embed = Embed(title=f"Order History for {user.display_name}") #type: ignore
         embed.add_field(name="User ID", value=user_id, inline=False)
-        embed.add_field(name="Registration Date", value=registered_at, inline=False)
         embed.add_field(name="Order History", value=order_history or "No orders found.", inline=False)
 
         await ctx.send(embed=embed)
+
 
 
 async def setup(bot):
