@@ -4,4 +4,5 @@ discord-pretty-help
 qrcode
 pillow
 bhimupipy
+psutil
 

@@ -5,6 +5,8 @@ import logging
 from datetime import datetime
 import configuration.discordConfig as dconfig
 from pretty_help import PrettyHelp
+import psutil
+import asyncio 
 
 # Configure logging
 log_file = f"./logs/{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}.log"
@@ -60,7 +62,22 @@ async def on_ready():
                 logger.error(e)
                 print(f' | ❌ | Failed to load {file[:-3]} because: {str(e)}')
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'{dconfig.PREFIX}help'))
+async def update_presence():
+    while True:
+        # Get memory usage and CPU usage
+        memory_usage = psutil.virtual_memory().percent
+        cpu_usage = psutil.cpu_percent(interval=None)
+
+        # Set the presence with memory and CPU usage info
+        await bot.change_presence(
+            activity=discord.Streaming(
+                name=f"Memory: {memory_usage:.1f}% | CPU: {cpu_usage:.1f}%",
+                url="https://www.twitch.tv/pixelshield",  # Replace with your Twitch channel URL
+            )
+        )
+
+        # Wait for 5 seconds before updating the presence again
+        await asyncio.sleep(5)
 
 
 bot.run(dconfig.TOKEN)
