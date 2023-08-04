@@ -8,6 +8,8 @@ from pretty_help import PrettyHelp
 import psutil
 import asyncio 
 import random
+import subprocess
+import sys
 
 # Configure logging
 log_file = f"./logs/{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}.log"
@@ -80,6 +82,23 @@ async def update_presence():
 
         # Wait for 5 seconds before updating the presence again
         await asyncio.sleep(5)
+
+@bot.command()
+@commands.is_owner()  # Ensure only the bot owner can use this command
+async def restart(ctx):
+    """
+    Restarts the bot
+    """
+    await ctx.send("Restarting...")
+
+    # Get the current process ID (PID) of the running script
+    current_pid = subprocess.Popen(["pgrep", "-f", "pixelshield.py"], stdout=subprocess.PIPE, text=True).communicate()[0].strip()
+
+    # Restart the bot by running the Python script with the same arguments as the current process
+    subprocess.Popen(["python3", "pixelshield.py", *sys.argv[1:]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Terminate the current process
+    subprocess.Popen(["kill", "-9", current_pid])
 
 
 bot.run(dconfig.TOKEN)
