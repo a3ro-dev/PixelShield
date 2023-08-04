@@ -5,7 +5,7 @@ from PIL import Image
 import configuration.discordConfig as dcfg
 import os
 import io
-import qrcode
+import qrcode.main as qrcode
 from bhimupipy import verify_upi
 
 class UPIView(View):
@@ -29,10 +29,10 @@ class UPI(commands.Cog):
         """
         Generates Payment QR Code
         """
-        if amount == None:
+        if amount is None:
             await ctx.send('Please enter an Amount')
 
-        if description == None:
+        if description is None:
             await ctx.send('Please enter the design name')
         upi_id = dcfg.upi_id
         # Generate the UPI link
