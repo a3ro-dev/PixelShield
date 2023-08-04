@@ -82,7 +82,7 @@ class Ordering(commands.Cog):
         await ctx.send(f"Last order for user with ID {user_id} has been canceled.")
     
     @commands.hybrid_command()
-    async def show_orders(self, ctx, user_id: int):
+    async def show_orders(self, ctx, user_id):
         """
         Shows the history of an user's order from PixelShield
         """
@@ -114,7 +114,7 @@ class Ordering(commands.Cog):
         # Create a nicely formatted message with the orders data
         message = f"Orders for user with ID {user_id} (<@{user_id}>):\n"
         for idx, order in enumerate(orders_list, start=1):
-            message += f"`{idx}. {order.strip()}\n`"
+            message += f"{idx}. {order.strip()}\n"
 
         await ctx.send(message)
 
