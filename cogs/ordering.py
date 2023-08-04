@@ -88,6 +88,12 @@ class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
         embed = discord.Embed()
         embed.title = f'Order Request From - __@{interaction.user.name}__'
         user_id = interaction.user.id
+        conn = sqlite3.connect(database_file)
+        cursor = conn.cursor()
+        order_data = f"{self.q3.value},"
+        cursor.execute("UPDATE users SET orders = ? WHERE id = ?", (order_data, user_id))
+        conn.commit()
+        conn.close()
         accname = get_user_name(user_id=user_id)
         embed.add_field(name="User's Name", value=f'`{accname}`', inline=True)
         embed.add_field(name='Device Information', value=f'`{self.q1.value}`', inline=True)
