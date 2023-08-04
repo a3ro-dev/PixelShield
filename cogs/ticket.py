@@ -55,13 +55,13 @@ class Tickett(discord.ui.Select):
                 await ticket_channel.send(embed=embed, view=view)
 
             if self.values[0] == "Issue":
-                mod = interaction.guild.get_role(config.AdminSupportRole) #type: ignore
+                admin = interaction.guild.get_role(config.AdminSupportRole) #type: ignore
                 categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
                 await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True) 
                 ticket_channel = await categ.create_text_channel(name=f"issue-{interaction.user.name}") #type: ignore
 
                 await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(admin, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.AdminSupportRole}> ")
@@ -70,13 +70,13 @@ class Tickett(discord.ui.Select):
                 await ticket_channel.send(embed=embed, view=view)
             
             if self.values[0] == "Partnership":
-                mod = interaction.guild.get_role(config.PartnerShipSupportRole)  #type: ignore
+                partnershipmod = interaction.guild.get_role(config.PartnerShipSupportRole)  #type: ignore
                 categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
                 await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True)
                 ticket_channel = await categ.create_text_channel(name=f"partnership-{interaction.user.name}") #type: ignore
 
                 await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(partnershipmod, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.PartnerShipSupportRole}> ")
@@ -85,13 +85,13 @@ class Tickett(discord.ui.Select):
                 await ticket_channel.send(embed=embed, view=view)
 
             if self.values[0] == "Bot Issue":
-                mod = interaction.guild.get_role(config.BotDevRole)  #type: ignore
+                dev = interaction.guild.get_role(config.BotDevRole)  #type: ignore
                 categ = discord.utils.get(interaction.guild.categories, id=config.ticket_categ_id) #type: ignore
                 await interaction.response.send_message("Creating a ticket for you, this may take a while!", ephemeral=True)
                 ticket_channel = await categ.create_text_channel(name=f"bot-issue-{interaction.user.name}") #type: ignore
 
                 await ticket_channel.set_permissions(interaction.user, view_channel=True, send_messages=True) #type: ignore
-                await ticket_channel.set_permissions(mod, read_messages=True, send_messages=True) #type: ignore
+                await ticket_channel.set_permissions(dev, read_messages=True, send_messages=True) #type: ignore
                 view = Close()
                 await ticket_channel.send(
                         f"{interaction.user.mention} | <@&{config.BotDevRole}> ")

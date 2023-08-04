@@ -130,7 +130,7 @@ class Auth(commands.Cog):
 
 
     @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the admin_roles list
-    @commands.command(aliases=['addo', 'add_orderhist', 'addhist'])
+    @commands.hybrid_command(aliases=['addo', 'add_orderhist', 'addhist'])
     async def add_order(self, ctx, user: commands.UserConverter, *, order_details: str):
         """
         Add an order for a user in the database.
@@ -138,7 +138,8 @@ class Auth(commands.Cog):
         user_id = user.id #type: ignore
         self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
         result = self.cursor.fetchone()
-        if not result:  # User does not exist in the database
+
+        if result is None:  # User does not exist in the database
             await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") #type: ignore
             return
 
@@ -152,7 +153,7 @@ class Auth(commands.Cog):
         await ctx.send(f"Order #{order_count} added for {user.display_name} (ID: {user_id}).") #type: ignore
 
     @commands.has_any_role(*dcfg.admin_uid)  # Check if the user has any role in the admin_roles list
-    @commands.command(aliases=['orderhist', 'oh'])
+    @commands.hybrid_command(aliases=['orderhist', 'oh'])
     async def order_history(self, ctx, user: commands.UserConverter):
         """
         Show a user's order history along with other details in an embed.

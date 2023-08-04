@@ -83,7 +83,7 @@ class UPI(commands.Cog):
         """
         Checks the validity and shows information regarding a vpa
         """
-        if upi_id == None:
+        if upi_id is None:
             await ctx.send('Enter upi id')
         # Verify the UPI ID using the bhimupipy library
         result = verify_upi(upi_id)

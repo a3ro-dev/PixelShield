@@ -233,14 +233,14 @@ class Utilities(commands.Cog):
                 reply = f"Hello {message.author.mention}, please note that the minimum response time for {targeted_user.mention} is three hours. We kindly request your patience as they may be busy attending to other matters. We appreciate your understanding!"
                 await message.channel.send(reply)
 
-    @commands.hybrid_command(aliases=['social'], description="Sends socials of Graphics Code")
+    @commands.hybrid_command(aliases=['social'], description="Sends socials of PixelShield")
     async def socials(self, ctx):
         button1 = discord.ui.Button(label='Facebook', url="https://discord.com/channels/1117696325010587720/1117696326839312418",
                              emoji='<:facebook:1132595134769397830>')
 
         button2 = discord.ui.Button(label='Telegram',
-                             url="https://behance.net/graphicscode1",
-                             emoji='<Be:1024981938500554752>')
+                             url="https://discord.com/channels/1117696325010587720/1117696326839312423",
+                             emoji='<:Telegram:1136858886096298158>')
 
         button3 = discord.ui.Button(label='Instagram',
                              url="https://discord.com/channels/1117696325010587720/1117696326839312417",

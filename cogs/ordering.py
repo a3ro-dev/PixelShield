@@ -30,6 +30,7 @@ class Ordering(commands.Cog):
         """
          Displays the order modal. Note that you need to be logged in to make this a bot command
         """
+        
         embed = discord.Embed(title="Place an Order",
                               description="**Fill This Form To Proceed**")
         embed.set_footer(
