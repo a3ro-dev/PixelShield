@@ -137,12 +137,12 @@ class Auth(commands.Cog):
         Add an order for a user in the database.
         """
         self.create_table()
-        user_id = user.id
+        user_id = user.id # type: ignore
         self.cursor.execute("SELECT id, orders FROM users WHERE id=?", (user_id,))
         result = self.cursor.fetchone()
 
         if result is None:  # User does not exist in the database
-            await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.")
+            await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") # type: ignore
             return
 
         user_id, orders_data = result
@@ -153,7 +153,42 @@ class Auth(commands.Cog):
         self.cursor.execute("UPDATE users SET orders=? WHERE id=?", (sqlite3.Binary(pickle.dumps(orders_data)), user_id))
         self.db.commit()
 
-        await ctx.send(f"Order added for {user.display_name} (ID: {user_id}).")
+        await ctx.send(f"Order added for {user.display_name} (ID: {user_id}).") # type: ignore
+        
+    @commands.hybrid_command(aliases=['del_oddhist', 'delete_order'])
+    async def delete_orderhist(self, ctx):
+        # Step 2: Retrieve user's order history from the database
+        user_id = str(ctx.author.id)
+        self.cursor.execute("SELECT orders FROM users WHERE id=?", (user_id,))
+        result = self.cursor.fetchone()
+        if not result or not result[0]:
+            await ctx.send("You don't have any order history.")
+            return
+
+        # Step 3: Display user's order history and ask them to choose the order to delete
+        orders_data = pickle.loads(result[0])
+        orders_list = list(orders_data.keys())
+        orders_str = "\n".join(f"{index + 1}. {order}" for index, order in enumerate(orders_list))
+        await ctx.send(f"Your order history:\n{orders_str}\n\nPlease enter the number of the order you want to delete.")
+
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
+
+        try:
+            reply = await self.bot.wait_for("message", check=check, timeout=30)
+            index = int(reply.content) - 1
+            if 0 <= index < len(orders_list):
+                # Step 4: Delete the chosen order from the user's order history in the database
+                del orders_data[orders_list[index]]
+                self.cursor.execute("UPDATE users SET orders=? WHERE id=?", (sqlite3.Binary(pickle.dumps(orders_data)), user_id))
+                self.db.commit()
+                await ctx.send("Order deleted successfully.")
+            else:
+                await ctx.send("Invalid input. Please enter a valid number.")
+        except ValueError:
+            await ctx.send("Invalid input. Please enter a valid number.")
+        except asyncio.TimeoutError:
+            await ctx.send("You took too long to respond. The command has been canceled.")
 
     @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
     @commands.hybrid_command(aliases=['orderhist', 'oh'])
