@@ -4,6 +4,7 @@ from discord.ext import commands
 import asyncio
 import logging
 import json
+import pickle
 
 logger = logging.getLogger(__name__)
 
