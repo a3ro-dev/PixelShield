@@ -38,7 +38,7 @@ class Ordering(commands.Cog):
         view = OrderingModalViewBut()
         await ctx.send(embed=embed, view=view)
     
-    @commands.hybrid_command()
+    @commands.hybrid_command(aliases=['delorder', 'delete_order_history'])
     async def cancel(self, ctx, user_id: int):
         """
         Deletes an order from an user's ordering history
@@ -112,9 +112,9 @@ class Ordering(commands.Cog):
         orders_list = orders_data.split(",")
 
         # Create a nicely formatted message with the orders data
-        message = f"Orders for user with ID {user_id}:\n"
+        message = f"Orders for user with ID {user_id} (<@{user_id}>):\n"
         for idx, order in enumerate(orders_list, start=1):
-            message += f"{idx}. {order.strip()}\n"
+            message += f"`{idx}. {order.strip()}\n`"
 
         await ctx.send(message)
 
