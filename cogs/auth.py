@@ -129,27 +129,5 @@ class Auth(commands.Cog):
             admin = await self.bot.fetch_user(admin_id)
             await admin.send(error_message)
 
-    # @commands.has_any_role(*dcfg.bot_dev)  # Check if the user has any role in the bot_dev list
-    # @commands.hybrid_command(aliases=['orderhist', 'oh'])
-    # async def order_history(self, ctx, user: commands.UserConverter):
-    #     """
-    #     Show a user's order history along with other details in an embed.
-    #     """
-    #     user_id = user.id #type: ignore
-    #     self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
-    #     result = self.cursor.fetchone()
-    #     if not result:  # User does not exist in the database
-    #         await ctx.send(f"{user.display_name} does not have a PixelShield account. They need to register first.") #type: ignore
-    #         return
-
-    #     orders_data = json.loads(result[2]) if result[2] else {}
-    #     order_history = "\n".join(f"{order}: {details}" for order, details in orders_data.items())
-
-    #     embed = Embed(title=f"Order History for {user.display_name}") #type: ignore
-    #     embed.add_field(name="User ID", value=user_id, inline=False)
-    #     embed.add_field(name="Order History", value=order_history or "No orders found.", inline=False)
-
-    #     await ctx.send(embed=embed)
-
 async def setup(bot):
     await bot.add_cog(Auth(bot))

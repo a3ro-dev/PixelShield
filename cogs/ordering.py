@@ -40,6 +40,11 @@ class Ordering(commands.Cog):
     
     @commands.hybrid_command()
     async def cancel(self, ctx, user_id: int):
+        """
+        Deletes an order from an user's ordering history
+        """
+        if user_id is None:
+            user_id = ctx.author.id
         conn = sqlite3.connect(database_file)
         cursor = conn.cursor()
 
@@ -75,6 +80,45 @@ class Ordering(commands.Cog):
         conn.close()
 
         await ctx.send(f"Last order for user with ID {user_id} has been canceled.")
+    
+    @commands.hybrid_command()
+    async def show_orders(self, ctx, user_id: int):
+        """
+        Shows the history of an user's order from PixelShield
+        """
+        if user_id is None:
+            user_id = ctx.author.id
+        conn = sqlite3.connect(database_file)
+        cursor = conn.cursor()
+
+        # Check if the user exists in the database
+        cursor.execute("SELECT COUNT(*) FROM users WHERE id=?", (user_id,))
+        user_exists = cursor.fetchone()[0] > 0
+
+        if not user_exists:
+            await ctx.send("User not found in the database.")
+            conn.close()
+            return
+
+        # Get the current orders data for the specified user
+        cursor.execute("SELECT orders FROM users WHERE id=?", (user_id,))
+        orders_data = cursor.fetchone()[0]
+
+        if not orders_data:
+            await ctx.send("No orders data found for this user.")
+            conn.close()
+            return
+
+        orders_list = orders_data.split(",")
+
+        # Create a nicely formatted message with the orders data
+        message = f"Orders for user with ID {user_id}:\n"
+        for idx, order in enumerate(orders_list, start=1):
+            message += f"{idx}. {order.strip()}\n"
+
+        await ctx.send(message)
+
+        conn.close()
 
 class OrderingCallModalView(discord.ui.Modal, title='Order Details'):
     q1 = discord.ui.TextInput(
