@@ -135,6 +135,7 @@ class Auth(commands.Cog):
         """
         Add an order for a user in the database.
         """
+        self.create_table()
         user_id = user.id
         self.cursor.execute("SELECT id, orders FROM users WHERE id=?", (user_id,))
         result = self.cursor.fetchone()
