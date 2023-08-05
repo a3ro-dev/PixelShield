@@ -84,7 +84,7 @@ async def update_presence():
         await asyncio.sleep(5)
 
 @bot.command()
-@commands.is_owner()  # Ensure only the bot owner can use this command
+@commands.has_permissions(Administrator=True)  # Ensure only the bot owner can use this command
 async def restart(ctx):
     """
     Restarts the bot
