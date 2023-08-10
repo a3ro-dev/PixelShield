@@ -77,13 +77,6 @@ class UPI(commands.Cog):
 
         # Delete the generated QR code file
         os.remove(qr_code_with_border_path)  
-        # Wait for the interaction
-        try:
-            interaction = await self.bot.wait_for("button_click", timeout=60, check=lambda i: i.message == message and i.user == ctx.author)
-            if interaction.component == view.button:
-                await interaction.respond(type=InteractionType.OpenUrl, url=upi_url)
-        except asyncio.TimeoutError:
-            await ctx.send("The interaction timed out.")
      
     @commands.hybrid_command()
     async def check_upi(self, ctx, upi_id: str):          
