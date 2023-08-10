@@ -28,6 +28,7 @@ class UPI(commands.Cog):
     async def upi(self, ctx, amount: int, description: str):
         """
         Generates Payment QR Code
+        NOTE: SLASH CMD FOR THIS THROWS EXCEPTION.
         """
         if amount is None:
             await ctx.send('Please enter an Amount')
