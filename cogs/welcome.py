@@ -20,7 +20,7 @@ class Greetings (commands.Cog):
                        emoji='📚')
 
         button3 = Button(label='Order',
-                       url="https://discord.com/channels/1117696325010587720/1117696326386339860",
+                       url="https://discord.com/channels/1117696325010587720/1136978252196479018",
                        emoji='<:pixelshield:1126182274422026300>')
 
         view = View()
@@ -36,7 +36,7 @@ class Greetings (commands.Cog):
 <:pixelshield:1126182274422026300> __Checkout what all we offer__
 <:pixelshield:1126182274422026300> **| Catalogue** <#1117696326080135188>
 <:pixelshield:1126182274422026300> __Experience fashionable uniquenes__
-<:pixelshield:1126182274422026300> **| Order Placement:** <#1117696326386339860>
+<:pixelshield:1126182274422026300> **| Order Placement:** <#1136978252196479018>
 <:pixelshield:1126182274422026300> __Create a PixelShield Account__
 <:pixelshield:1126182274422026300> **| Use `$register` command in <@1125004870622122035> DMs** 
 
